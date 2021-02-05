@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.23.141:8848,172.16.23.142:8848,172.16.23.234:8848
+        heart-beat-timeout: 15
+        heart-beat-interval: 5
+      config:
+        server-addr: 172.16.23.141:8848,172.16.23.142:8848,172.16.23.234:8848
+      #官网上说明此配置必须放在bootstrap配置中，且其值对应的是namespace的id
+#        namespace: aef1ebef-b370-4bcc-b919-c64d2a6270ba
+#      discovery:
+#        namespace: aef1ebef-b370-4bcc-b919-c64d2a6270ba
+  application:
+    name: nacos-provider

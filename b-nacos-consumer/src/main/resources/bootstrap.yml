@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 172.16.23.141:8848,172.16.23.142:8848,172.16.23.234:8848
+        heart-beat-interval: 5
+        heart-beat-timeout: 15
+      config:
+        server-addr: 172.16.23.141:8848,172.16.23.142:8848,172.16.23.234:8848
+  application:
+    name: nacos-consumer
+
+server:
+  port: 8081
