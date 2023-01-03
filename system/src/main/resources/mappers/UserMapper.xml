@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yyl.system.mapper.UserMapper">
+    <sql id="base_column">
+        id,username,loginname,password,salt,create_time,update_time,create_by,update_by
+    </sql>
+    <insert id="insertBatchList" parameterType="java.util.List">
+        INSERT INTO sys_user (<include refid="base_column"/>) VALUES
+        <foreach item="data" collection="list" separator=",">
+            (
+            #{data.id},
+            #{data.username},
+            #{data.loginname},
+            #{data.password},
+            #{data.salt},
+            #{data.createTime},
+            #{data.updateTime},
+            #{data.createBy},
+            #{data.updateBy}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateBatchList" parameterType="java.util.List">
+        <foreach item="data" collection="list"  open="" close="" separator=";">
+            update sys_user
+            <set>
+                username=#{data.username},
+                loginname=#{data.loginname},
+                password=#{data.password},
+                salt=#{data.salt},
+                create_time=#{data.createTime},
+                update_time=#{data.updateTime},
+                create_by=#{data.createBy},
+                update_by=#{data.updateBy}
+            </set>
+            where id=#{data.id}
+        </foreach>
+    </update>
+
+
+
+    <insert id="insertBatchListByParam" parameterType="java.util.List">
+        INSERT INTO sys_user (<include refid="base_column"/>) VALUES
+        <foreach item="data" collection="users" separator=",">
+            (
+            #{data.id},
+            #{data.username},
+            #{data.loginname},
+            #{data.password},
+            #{data.salt},
+            #{data.createTime},
+            #{data.updateTime},
+            #{data.createBy},
+            #{data.updateBy}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateBatchListByParam" parameterType="java.util.List">
+        <foreach item="data" collection="users" separator=";">
+            update sys_user
+            <set>
+                username=#{data.username},
+                loginname=#{data.loginname},
+                password=#{data.password},
+                salt=#{data.salt},
+                create_time=#{data.createTime},
+                update_time=#{data.updateTime},
+                create_by=#{data.createBy},
+                update_by=#{data.updateBy}
+            </set>
+            where id=#{data.id}
+        </foreach>
+    </update>
+
+
+    <insert id="insertBatchArray" >
+        INSERT INTO sys_user (<include refid="base_column"/>) VALUES
+        <foreach item="data" collection="array" separator=",">
+            (
+            #{data.id},
+            #{data.username},
+            #{data.loginname},
+            #{data.password},
+            #{data.salt},
+            #{data.createTime},
+            #{data.updateTime},
+            #{data.createBy},
+            #{data.updateBy}
+            )
+        </foreach>
+    </insert>
+    <update id="updateBatchArray" >
+        <foreach item="data" collection="array" separator=";">
+            update sys_user
+            <set>
+                username=#{data.username},
+                loginname=#{data.loginname},
+                password=#{data.password},
+                salt=#{data.salt},
+                create_time=#{data.createTime},
+                update_time=#{data.updateTime},
+                create_by=#{data.createBy},
+                update_by=#{data.updateBy}
+            </set>
+            where id=#{data.id}
+        </foreach>
+    </update>
+</mapper>

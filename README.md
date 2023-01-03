@@ -1,0 +1,11 @@
+fein重试、超时、熔断
+openfeign+全局异常处理器：当经过全局处理器的异常时，openfeign调用还是正常的bug
+mybatis自动填充基础信息
+gateway鉴权、熔断
+具体服务swagger、网关swagger
+分布式主键服务
+seata
+gateway动态路由
+gateway打印具体错误日志、全局异常返回
+gateway中无法使用openfeign bug
+rabbitmq

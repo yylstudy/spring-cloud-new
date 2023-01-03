@@ -1,0 +1,40 @@
+server:
+  port: 7001
+spring:
+  application:
+    name: leaf-server
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+        group: DEFAULT_GROUP
+        leafDataId: leaf-server.properties
+        namespace:
+      #        file-extension: properties
+#        prefix: leaf-server
+      discovery:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+        namespace:
+        group: DEFAULT_GROUP
+        watch:
+          enabled: true
+        heart-beat-interval: 3000
+        heartBeatTimeout: 6000
+        watch-delay: 12000
+        ip-delete-timeout: 12000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    health:
+      sensitive: true
+  endpoint:
+    health:
+      show-details: ALWAYS
+

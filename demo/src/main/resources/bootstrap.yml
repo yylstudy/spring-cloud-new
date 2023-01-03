@@ -1,0 +1,58 @@
+server:
+  port: 7002
+spring:
+  application:
+    name: demo
+  main:
+    allow-circular-references: true
+  cloud:
+    nacos:
+      config:
+        group: DEFAULT_GROUP
+        file-extension: yaml
+        prefix: ${spring.application.name}
+      discovery:
+        group: DEFAULT_GROUP
+        watch:
+          enabled: true
+        heart-beat-interval: 3000
+        heartBeatTimeout: 6000
+        watch-delay: 12000
+        ip-delete-timeout: 12000
+      username: nacos
+      password: nacos
+      server-addr: localhost:8848
+    sentinel:
+      datasource:
+        #naocs存储的熔断规则
+        degrade1:
+          nacos:
+            server-addr: localhost:8848
+            data-id: openfeign-sentinel.json
+            group-id: DEFAULT_GROUP
+            data-type: json
+            rule-type: degrade
+      transport:
+        dashboard: localhost:8080
+        port: 8719
+feign:
+  #openfeign必须开启sentinel或hystrix或resilience4j 远程调用异常时才会走fallback和fallbackFactory的逻辑
+  sentinel:
+    enabled: true
+  client:
+    config:
+      #默认feign的超时时间
+      default:
+        connectTimeout: 2000
+        readTimeout: 3000
+      #leaf这个feignClient的单独超时时间设置，该值为@FeignClient的contextId
+      system:
+        connectTimeout: 2000
+        readTimeout: 3000
+        loggerLevel: FULL
+
+
+
+logging:
+  level:
+    com.yyl.demo.feignclients: debug

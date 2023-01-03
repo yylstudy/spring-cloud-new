@@ -1,0 +1,35 @@
+server:
+  port: 7000
+spring:
+  application:
+    name: system
+  main:
+    allow-circular-references: true
+  cloud:
+    nacos:
+      config:
+        group: DEFAULT_GROUP
+        file-extension: yaml
+        prefix: ${spring.application.name}
+      discovery:
+        group: DEFAULT_GROUP
+        watch:
+          enabled: true
+        heart-beat-interval: 3000
+        heartBeatTimeout: 6000
+        watch-delay: 12000
+        ip-delete-timeout: 12000
+      username: nacos
+      password: nacos
+      server-addr: localhost:8848
+feign:
+  client:
+    config:
+      #默认feign的超时时间
+      default:
+        connectTimeout: 2000
+        readTimeout: 5000
+      #leaf这个feignClient的单独超时时间设置，该值为@FeignClient的contextId
+      leaf-server:
+        connectTimeout: 3000
+        readTimeout: 3000
