@@ -4,10 +4,12 @@ import com.alibaba.csp.sentinel.slots.block.degrade.circuitbreaker.CircuitBreake
 import com.alibaba.csp.sentinel.slots.block.degrade.circuitbreaker.EventObserverRegistry;
 import com.alibaba.csp.sentinel.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author yang.yonglian
@@ -30,4 +32,5 @@ public class DemoApplication {
                 });
 
     }
+
 }

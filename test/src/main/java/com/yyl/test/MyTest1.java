@@ -300,6 +300,46 @@ public class MyTest1 {
         log.info("result code:{}",entity.getStatusCode());
     }
 
+    /**
+     * 网关全局异常处理器
+     */
+    @Test
+    public void test12() throws Exception{
+        for(int i=0;i<1;i++){
+            String token = getToken();
+            Map<String,String> header = new HashMap<>();
+            header.put(ACCESS_TOKEN,token);
+            UserDTO userDTO = new UserDTO();
+            long t1 = System.currentTimeMillis();
+            ResponseEntity<String> entity = HttpUtil
+                    .doPostForEntity("http://localhost:9998/custom/testSendMessage",userDTO,header, String.class);
+            long t2 = System.currentTimeMillis();
+            log.info("time:{}",(t2-t1));
+            log.info("result body:{}",entity.getBody());
+            log.info("result code:{}",entity.getStatusCode());
+        }
+    }
+
+    /**
+     * 网关全局异常处理器
+     */
+    @Test
+    public void test13() throws Exception{
+        for(int i=0;i<10;i++){
+            String token = getToken();
+            Map<String,String> header = new HashMap<>();
+            header.put(ACCESS_TOKEN,token);
+            UserDTO userDTO = new UserDTO();
+            long t1 = System.currentTimeMillis();
+            ResponseEntity<String> entity = HttpUtil
+                    .doPostForEntity("http://localhost:9998/custom/testbatchSendMessage",userDTO,header, String.class);
+            long t2 = System.currentTimeMillis();
+            log.info("time:{}",(t2-t1));
+            log.info("result body:{}",entity.getBody());
+            log.info("result code:{}",entity.getStatusCode());
+        }
+    }
+
     private String getToken(){
         LoginRqDTO loginRqDTO = new LoginRqDTO();
         loginRqDTO.setLoginname("admin");

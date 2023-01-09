@@ -35,6 +35,43 @@ spring:
       transport:
         dashboard: localhost:8080
         port: 8719
+  rabbitmq:
+    addresses: 172.16.252.124:5673
+    password: Water@4399
+    publisher-returns: false
+    username: root
+    virtual-host:
+    connection-timeout: 10s
+    publisher-confirm-type: correlated
+    listener:
+      acknowledge-mode: manual
+      type: simple
+      simple:
+        acknowledge-mode: manual
+        #本地每个消费者线程缓存最大unack数
+        prefetch: 250
+        #最小消费者线程
+        concurrency: 1
+        #最大消费者线程
+        max-concurrency: 1
+        #开启批量消费
+#        consumer-batch-enabled: true
+#        batch-size: 10
+        retry:
+          #开启重试
+          enabled: true
+          #最大重试次数
+          max-attempts: 4
+          #最小重试间隔
+          initial-interval: 1000ms
+          #最大重试间隔
+          max-interval: 5000ms
+          #系数
+          multiplier: 2
+
+
+
+
 feign:
   #openfeign必须开启sentinel或hystrix或resilience4j 远程调用异常时才会走fallback和fallbackFactory的逻辑
   sentinel:

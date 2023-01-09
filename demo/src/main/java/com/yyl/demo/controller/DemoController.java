@@ -2,12 +2,20 @@ package com.yyl.demo.controller;
 
 import com.alibaba.csp.sentinel.slots.block.degrade.DegradeRuleManager;
 import com.alibaba.csp.sentinel.slots.block.degrade.circuitbreaker.CircuitBreaker;
+import com.rabbitmq.client.Channel;
 import com.yyl.demo.dto.UserRepDTO;
 import com.yyl.demo.dto.UserReqDTO;
 import com.yyl.demo.feignclients.SystemFeignClient;
 import com.yyl.demo.feignclients.SystemFeignClient2;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,8 +23,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -181,10 +191,85 @@ public class DemoController {
         Thread.sleep(4000);
         throw new RuntimeException("hahah");
     }
+
+    /**
+     * 测试网关限流
+     * @return
+     */
     @RequestMapping("/testGatewayFlow")
     public UserRepDTO testGatewayFlow() {
         return new UserRepDTO();
     }
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    /**
+     * 测试rabbitmq
+     * @return
+     */
+    @RequestMapping("/testSendMessage")
+    public UserRepDTO testSendMessage() {
+        ExecutorService pool = Executors.newFixedThreadPool(20);
+        for(int i=0;i<1;i++){
+            pool.execute(()->{
+                String id = UUID.randomUUID().toString().replace("-","");
+                CorrelationData correlationData = new CorrelationData(id);
+                UserRepDTO userRepDTO = new UserRepDTO();
+                String uuid = UUID.randomUUID().toString().replace("-","");
+                userRepDTO.setLoginname(uuid);
+                rabbitTemplate.convertAndSend("test_change","t_key",userRepDTO,correlationData);
+            });
+        }
+        return new UserRepDTO();
+    }
+
+    /**
+     * rabbitmq消费
+     * @return
+     */
+    @RabbitListener(queues = "t_queue")
+    public void rabbitListener(UserRepDTO userRepDTO, Message message, Channel channel) throws Exception{
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+        log.info("receive deliveryTag:{}, message:{}",deliveryTag,userRepDTO);
+        int i = 1/0;
+        channel.basicAck(deliveryTag,false);
+    }
+
+//    /**
+//     * 测试rabbitmq
+//     * @return
+//     */
+//    @RequestMapping("/testbatchSendMessage")
+//    public UserRepDTO testbatchSendMessage() {
+//        ExecutorService pool = Executors.newFixedThreadPool(20);
+//        for(int i=0;i<1;i++){
+//            pool.execute(()->{
+//                String id = UUID.randomUUID().toString().replace("-","");
+//                CorrelationData correlationData = new CorrelationData(id);
+//                UserRepDTO userRepDTO = new UserRepDTO();
+//                String uuid = UUID.randomUUID().toString().replace("-","");
+//                userRepDTO.setLoginname(uuid);
+//                rabbitTemplate.convertAndSend("test_change","t_key3",userRepDTO,correlationData);
+//            });
+//        }
+//        return new UserRepDTO();
+//    }
+
+//    /**
+//     * rabbitmq 批量消费
+//     * @return
+//     */
+//    @RabbitListener(queues = "t_queue3")
+//    public void rabbitListener3( List<Message> messages, Channel channel) throws Exception{
+////        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+////        log.info("receive deliveryTag:{}, message:{}",deliveryTag,userRepDTO);
+//        log.info("receive batch message length:{}",messages.size());
+////        int i = 1/0;
+//        for(Message message:messages){
+//            channel.basicAck(message.getMessageProperties().getDeliveryTag(),false);
+//        }
+//    }
 
     /**
      * 获取实时熔断器状态
