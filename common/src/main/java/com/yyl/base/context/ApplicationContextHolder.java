@@ -2,6 +2,7 @@ package com.yyl.base.context;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -47,6 +48,10 @@ public class ApplicationContextHolder implements ApplicationContextAware, Enviro
 
     public static <T> T getBean(Class<T> clazz){
         return applicationContext.getBean(clazz);
+    }
+
+    public static <T> ObjectProvider<T> getBeanProvider(Class<T> clazz){
+        return applicationContext.getBeanProvider(clazz);
     }
 
     public static <T> T getBean(String beanName){

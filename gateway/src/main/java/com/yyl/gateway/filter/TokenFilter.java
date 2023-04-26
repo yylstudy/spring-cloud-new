@@ -1,12 +1,16 @@
 package com.yyl.gateway.filter;
 
 import com.yyl.gateway.util.JsonUtil;
+import io.netty.channel.ChannelOption;
+import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -14,9 +18,11 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.PathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
 import java.util.*;
@@ -38,12 +44,12 @@ public class TokenFilter implements GlobalFilter, Ordered {
     public static final String ACCESS_TOKEN = "access_token";
     private PathMatcher pathMatcher = new AntPathMatcher();
     @Autowired
-    private WebClient.Builder webBuilder;
-    private final int cpus = Runtime.getRuntime().availableProcessors();
-    private final ExecutorService pool = new ThreadPoolExecutor(4*cpus, 4*cpus,
-            0L, TimeUnit.MILLISECONDS,
-            new LinkedBlockingQueue<>());
-
+    private WebClient.Builder webClientBuilder;
+    /**
+     * webclient的底层httpClient，主要设置超时时间
+     */
+    private HttpClient httpClient = HttpClient.create().option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 3000)
+            .responseTimeout(Duration.ofSeconds(5));
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String url = exchange.getRequest().getURI().getPath();
@@ -56,23 +62,22 @@ public class TokenFilter implements GlobalFilter, Ordered {
         if(!StringUtils.hasText(token)){
             return getVoidMono(exchange.getResponse(), 500,"token为空");
         }
-        Mono<Boolean> mono = webBuilder.baseUrl("lb://system/").build().get().uri(uriBuilder ->
-                uriBuilder.path("/sys/verifyToken").queryParam("token", token).build()
-        ).retrieve().bodyToMono(Boolean.class);
-        //3s内超时
-        CompletableFuture<Boolean> voidCompletableFuture = CompletableFuture
-                .supplyAsync(()->mono.block(Duration.ofSeconds(10)),pool);
-        boolean match = false;
-        try {
-            match = voidCompletableFuture.get();
-        } catch (Exception e) {
-            log.error("call verifyToken error",e);
-            return getVoidMono(exchange.getResponse(), 500,"token校验失败，请联系管理员");
-        }
-        if(!match){
-            return getVoidMono(exchange.getResponse(), 500,"无效的token");
-        }
-        return chain.filter(exchange);
+        Mono<Void> mono = webClientBuilder.baseUrl("ls://system")
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build().get().uri(uriBuilder ->
+                uriBuilder.path("/sys/verifyToken").queryParam("token", token).build())
+                .retrieve().bodyToMono(Boolean.class)
+                .doOnSuccess(match->log.info("token校验结果:{}",match))
+                .doOnError(error->{
+                    log.error("token request error",error);
+                    throw new RuntimeException("token校验失败");
+                }).flatMap(match->{
+                    if(!match){
+                        return getVoidMono(exchange.getResponse(), 500,"无效的token");
+                    }
+                    return chain.filter(exchange);
+                });
+        return mono;
     }
 
     private Mono<Void> getVoidMono(ServerHttpResponse serverHttpResponse, int errorCode, String errorMsg) {
@@ -141,5 +146,6 @@ public class TokenFilter implements GlobalFilter, Ordered {
         add("/vxeSocket/**");
         add("/eoaSocket/**");
         add("/actuator/**");
+        add("/*/v2/api-docs/**");
     }};
 }

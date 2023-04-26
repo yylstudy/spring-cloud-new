@@ -142,6 +142,7 @@ public class MyTest1 {
         Map<String,String> header = new HashMap<>();
         header.put(ACCESS_TOKEN,token);
         UserDTO userDTO = new UserDTO();
+        log.info("start");
         String userRepDTO = HttpUtil
                 .doPostForObject("http://localhost:9998/custom/testRecovery",userDTO,header, String.class);
         log.info("userRepDTO:{}",userRepDTO);
@@ -301,7 +302,7 @@ public class MyTest1 {
     }
 
     /**
-     * 网关全局异常处理器
+     * 消息发送测试
      */
     @Test
     public void test12() throws Exception{
@@ -340,6 +341,37 @@ public class MyTest1 {
         }
     }
 
+
+    @Test
+    public void test14() throws Exception{
+        String token = getToken();
+        ExecutorService pool = Executors.newFixedThreadPool(10);
+        CountDownLatch countDownLatch = new CountDownLatch(100000);
+        pool.execute(()->{
+
+        });
+        for(int i=0;i<100000;i++){
+            pool.execute(()->{
+                try{
+                    Map<String,String> header = new HashMap<>();
+                    header.put(ACCESS_TOKEN,token);
+                    UserDTO userDTO = new UserDTO();
+                    String userRepDTO = HttpUtil
+                            .doPostForObject("http://localhost:9998/custom/testRecovery",userDTO,header, String.class);
+                    log.info("userRepDTO:{}",userRepDTO);
+                }catch (Exception e){
+                    log.error("",e);
+                }finally {
+                    countDownLatch.countDown();
+                }
+            });
+        }
+        countDownLatch.await();
+
+    }
+
+
+
     private String getToken(){
         LoginRqDTO loginRqDTO = new LoginRqDTO();
         loginRqDTO.setLoginname("admin");
@@ -368,6 +400,8 @@ public class MyTest1 {
         System.out.println(JsonUtil.toJSONString(gatewayFlowRule));
 //        degradeRule.setSlowRatioThreshold()
     }
+
+
 
 
 }

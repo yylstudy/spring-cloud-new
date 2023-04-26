@@ -37,6 +37,9 @@ public class RabbitmqConfig {
         //发送端确认回调
         rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
             log.info("发送端消息确认,correlationData:{},ack:{},cause:{}",correlationData, ack, cause);
+            if(cause!=null){
+                log.error("+======================",cause);
+            }
         });
         rabbitTemplate.setReturnsCallback(returnedMessage->{
             log.warn("消息未被正确投递：{}",returnedMessage);
@@ -115,31 +118,39 @@ public class RabbitmqConfig {
         return new ImmediateRequeueMessageBatchRecoverer();
     }
 
-
-
     @Bean
     public Queue tQueue(){
-        Queue queue = QueueBuilder.durable("t_queue").build();
+        Queue queue = QueueBuilder.durable("test_queue").quorum().build();
         return queue;
+    }
+    /**
+     * 交换器
+     * @return
+     */
+    @Bean
+    public Exchange exchange(){
+        Exchange exchange =ExchangeBuilder.directExchange("test_exchange").build();
+        return exchange;
     }
 
     @Bean
     public Binding binding(){
-        Binding binding = new Binding("t_queue", Binding.DestinationType.QUEUE,
-                "test_change", "t_key", null);
+        Binding binding = new Binding("test_queue", Binding.DestinationType.QUEUE,
+                "test_exchange", "test_key", null);
+        return binding;
+    }
+
+
+    @Bean
+    public Binding mirrorBinding(){
+        Binding binding = new Binding("mirror_queue", Binding.DestinationType.QUEUE,
+                "test_exchange", "mirror_key", null);
         return binding;
     }
 
     @Bean
-    public Queue tQueue3(){
-        Queue queue = QueueBuilder.durable("t_queue3").build();
+    public Queue mirrorQueue(){
+        Queue queue = QueueBuilder.durable("mirror_queue").build();
         return queue;
-    }
-
-    @Bean
-    public Binding binding3(){
-        Binding binding = new Binding("t_queue3", Binding.DestinationType.QUEUE,
-                "test_change", "t_key3", null);
-        return binding;
     }
 }

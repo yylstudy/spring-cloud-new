@@ -37,7 +37,6 @@ public class LoginController {
     @ApiOperation("token验证接口")
     @GetMapping(value = "/verifyToken")
     public boolean verifyToken(@RequestParam("token") String token) throws Exception{
-//        Thread.sleep(5000);
         return loginService.verifyToken(token);
     }
 

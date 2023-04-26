@@ -29,7 +29,9 @@ import java.util.stream.Collectors;
 public class GatewayConfig {
     /**
      * 用于在gateway上远程调用，在Spring Cloud 2020版本后，spring cloud gateway集成openfeign会卡住无法启动
-     * 详细查看https://github.com/spring-cloud/spring-cloud-gateway/issues/2126
+     * 详细查看
+     * https://github.com/spring-cloud/spring-cloud-gateway/issues/2126
+     * https://github.com/spring-cloud/spring-cloud-gateway/issues/1090
      * 解决方法官方给出的通过WebClient去调用
      * @return
      */

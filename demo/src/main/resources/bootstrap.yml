@@ -36,10 +36,10 @@ spring:
         dashboard: localhost:8080
         port: 8719
   rabbitmq:
-    addresses: 172.16.252.124:5673
-    password: Water@4399
+    addresses: 172.16.252.111:5672
+    password: admin
     publisher-returns: false
-    username: root
+    username: admin
     virtual-host:
     connection-timeout: 10s
     publisher-confirm-type: correlated
@@ -68,8 +68,6 @@ spring:
           max-interval: 5000ms
           #系数
           multiplier: 2
-
-
 
 
 feign:

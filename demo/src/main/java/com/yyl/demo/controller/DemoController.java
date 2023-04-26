@@ -210,17 +210,13 @@ public class DemoController {
      */
     @RequestMapping("/testSendMessage")
     public UserRepDTO testSendMessage() {
-        ExecutorService pool = Executors.newFixedThreadPool(20);
-        for(int i=0;i<1;i++){
-            pool.execute(()->{
-                String id = UUID.randomUUID().toString().replace("-","");
-                CorrelationData correlationData = new CorrelationData(id);
-                UserRepDTO userRepDTO = new UserRepDTO();
-                String uuid = UUID.randomUUID().toString().replace("-","");
-                userRepDTO.setLoginname(uuid);
-                rabbitTemplate.convertAndSend("test_change","t_key",userRepDTO,correlationData);
-            });
-        }
+        String id = UUID.randomUUID().toString().replace("-","");
+        CorrelationData correlationData = new CorrelationData(id);
+        UserRepDTO userRepDTO = new UserRepDTO();
+        String uuid = UUID.randomUUID().toString().replace("-","");
+        userRepDTO.setLoginname(uuid);
+        log.info("==============================");
+        rabbitTemplate.convertAndSend("test_exchange","test_key",userRepDTO,correlationData);
         return new UserRepDTO();
     }
 
@@ -228,13 +224,39 @@ public class DemoController {
      * rabbitmq消费
      * @return
      */
-    @RabbitListener(queues = "t_queue")
+    @RabbitListener(queues = "test_queue")
     public void rabbitListener(UserRepDTO userRepDTO, Message message, Channel channel) throws Exception{
         long deliveryTag = message.getMessageProperties().getDeliveryTag();
         log.info("receive deliveryTag:{}, message:{}",deliveryTag,userRepDTO);
-        int i = 1/0;
         channel.basicAck(deliveryTag,false);
     }
+
+    /**
+     * rabbitmq消费
+     * @return
+     */
+    @RabbitListener(queues = "mirror_queue")
+    public void rabbitListener2(UserRepDTO userRepDTO, Message message, Channel channel) throws Exception{
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+        log.info("receive mirror_queue deliveryTag:{}, message:{}",deliveryTag,userRepDTO);
+        channel.basicAck(deliveryTag,false);
+    }
+
+    /**
+     * 测试rabbitmq
+     * @return
+     */
+    @RequestMapping("/testSendMirrorMessage")
+    public UserRepDTO testSendMirrorMessage() {
+        String id = UUID.randomUUID().toString().replace("-","");
+        CorrelationData correlationData = new CorrelationData(id);
+        UserRepDTO userRepDTO = new UserRepDTO();
+        String uuid = UUID.randomUUID().toString().replace("-","");
+        userRepDTO.setLoginname(uuid);
+        rabbitTemplate.convertAndSend("test_exchange","mirror_key",userRepDTO,correlationData);
+        return new UserRepDTO();
+    }
+
 
 //    /**
 //     * 测试rabbitmq

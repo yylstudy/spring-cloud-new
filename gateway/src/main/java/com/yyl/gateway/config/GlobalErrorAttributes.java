@@ -52,7 +52,6 @@ public class GlobalErrorAttributes implements ErrorAttributes {
         errorAttributes.put("success",false);
         errorAttributes.put("timestamp",System.currentTimeMillis());
         Throwable error = getError(request);
-        log.error("path:"+request.path()+",execute error",error);
         MergedAnnotation<ResponseStatus> responseStatusAnnotation = MergedAnnotations
                 .from(error.getClass(), MergedAnnotations.SearchStrategy.TYPE_HIERARCHY).get(ResponseStatus.class);
         HttpStatus errorStatus = determineHttpStatus(error, responseStatusAnnotation);
@@ -63,7 +62,8 @@ public class GlobalErrorAttributes implements ErrorAttributes {
         }else{
             errorAttributes.put("message", errorStatus.getReasonPhrase());
         }
-//        handleException(errorAttributes, determineException(error), includeStackTrace);
+        handleException(errorAttributes, determineException(error), includeStackTrace);
+        log.error("path:"+request.path()+",execute error",error);
         return errorAttributes;
     }
 
@@ -103,14 +103,14 @@ public class GlobalErrorAttributes implements ErrorAttributes {
     }
 
     private void handleException(Map<String, Object> errorAttributes, Throwable error, boolean includeStackTrace) {
-        errorAttributes.put("exception", error.getClass().getName());
+//        errorAttributes.put("exception", error.getClass().getName());
         if (includeStackTrace) {
             addStackTrace(errorAttributes, error);
         }
         if (error instanceof BindingResult) {
             BindingResult result = (BindingResult) error;
             if (result.hasErrors()) {
-                errorAttributes.put("errors", result.getAllErrors());
+//                errorAttributes.put("errors", result.getAllErrors());
             }
         }
     }
