@@ -52,4 +52,8 @@ public class CommonConstant {
      * 更新人field名
      */
     public static final String FEIGN_CALL = "updateBy";
+    /**
+     * nacoskey
+     */
+    public static final String CLOUD_SERVER_KEY = "spring.cloud.nacos.server-addr";
 }
