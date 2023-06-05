@@ -69,6 +69,9 @@ public class MyTest1 {
         log.info("userRepDTO:{}",userRepDTO);
         userDTO.setLoginname("yyl1");
         userDTO.setUsername("yyl1");
+        userDTO.setEmail("1594818954@qq.com");
+        userDTO.setPhone("15255178552");
+        userDTO.setSex("1");
         //批量创建用户
         Result result = HttpUtil.doPostForObject("http://localhost:9998/sys/user/batchOperate",userDTO,header, Result.class);
         log.info("result:{}",result);

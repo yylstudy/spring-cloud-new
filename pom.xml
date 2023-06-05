@@ -17,21 +17,18 @@
         <module>demo</module>
         <module>test</module>
     </modules>
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.6</version>
-        <relativePath/>
-    </parent>
     <properties>
         <project.version>1.0.0-SNAPSHOT</project.version>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <!-- 微服务 -->
-        <spring-cloud.version>2021.0.3</spring-cloud.version>
-        <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
+        <spring.boot.version>2.7.11</spring.boot.version>
+        <spring-cloud.version>2021.0.5</spring-cloud.version>
+        <spring-cloud-alibaba.version>2021.0.4.0</spring-cloud-alibaba.version>
         <mysql.version>8.0.22</mysql.version>
         <redisson-spring.version>3.16.8</redisson-spring.version>
+        <knife4j-gateway.version>4.1.0</knife4j-gateway.version>
         <!-- 数据库驱动 -->
         <mysql-connector-java.version>8.0.27</mysql-connector-java.version>
         <hutool.version>5.3.8</hutool.version>
@@ -49,6 +46,13 @@
     </properties>
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring.boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -116,6 +120,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>

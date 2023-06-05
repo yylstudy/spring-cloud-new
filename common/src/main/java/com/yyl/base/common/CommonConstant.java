@@ -56,4 +56,12 @@ public class CommonConstant {
      * nacoskey
      */
     public static final String CLOUD_SERVER_KEY = "spring.cloud.nacos.server-addr";
+    /**
+     * 默认的邮箱正则
+     */
+    public static final String DEFAULT_EMAIL_REGEX = "^(\\w+([-.][A-Za-z0-9]+)*){3,18}@\\w+([-.][A-Za-z0-9]+)*\\.\\w+([-.][A-Za-z0-9]+)*$";
+    /**
+     * 默认的手机正则
+     */
+    public static final String DEFAULT_MOBILE_REGEX = "^(?:(?:\\+|00)86)?1(?:(?:3[\\d])|(?:4[0,1,4-9])|(?:5[0-3,5-9])|(?:6[2,5-7])|(?:7[0-8])|(?:8[\\d])|(?:9[0-3,5-9]))\\d{8}$";
 }

@@ -10,21 +10,18 @@ spring:
     name: gateway
   cloud:
     nacos:
-      config:
-        group: DEFAULT_GROUP
-        file-extension: yaml
-        prefix: ${spring.application.name}
       discovery:
         group: DEFAULT_GROUP
-        watch:
-          enabled: true
-        heart-beat-interval: 3000
+        heartBeatInterval: 3000
         heartBeatTimeout: 6000
-        watch-delay: 12000
-        ip-delete-timeout: 12000
+        watchDelay: 12000
+        ipDeleteTimeout: 12000
       username: nacos
       password: nacos
       server-addr: localhost:8848
+  config:
+    import:
+      - optional:nacos:gateway.yaml
     gateway:
       discovery:
         locator:
@@ -65,6 +62,18 @@ spring:
             group-id: DEFAULT_GROUP
             data-type: json
             rule-type: gw-flow
+
+knife4j:
+  gateway:
+    enabled: true
+    routes:
+      - name: system
+        service-name: system
+        url: /sys/v2/api-docs
+      - name: demo
+        service-name: demo
+        url: /demo/v2/api-docs
+
 #  redis:
 #    redisson:
 #      config: |

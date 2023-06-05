@@ -3,11 +3,9 @@ package com.yyl.base.feign;
 import feign.*;
 import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
-import java.io.IOException;
 import java.util.Date;
 
 import static feign.FeignException.errorStatus;

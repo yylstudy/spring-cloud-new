@@ -147,5 +147,6 @@ public class TokenFilter implements GlobalFilter, Ordered {
         add("/eoaSocket/**");
         add("/actuator/**");
         add("/*/v2/api-docs/**");
+        add("/*/v3/api-docs/**");
     }};
 }

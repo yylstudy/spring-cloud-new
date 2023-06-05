@@ -1,5 +1,9 @@
 package com.yyl.system.dto;
 
+import com.yyl.base.common.SexEnum;
+import com.yyl.base.validation.Email;
+import com.yyl.base.validation.Enum;
+import com.yyl.base.validation.Mobile;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -24,4 +28,16 @@ public class UserDTO implements Serializable {
     @NotEmpty(message = "密码不能为空")
     @ApiModelProperty(value = "密码",required = true)
     private String password;
+    @NotEmpty(message = "邮箱不能为空")
+    @ApiModelProperty(value = "邮箱",required = true)
+    @Email
+    private String email;
+    @NotEmpty(message = "手机号码不能为空")
+    @ApiModelProperty(value = "手机号码",required = true)
+    @Mobile
+    private String phone;
+    @NotEmpty(message = "性别不能为空")
+    @ApiModelProperty(value = "性别",required = true)
+    @Enum(value = SexEnum.class,message = "性别只能为{value}")
+    private String sex;
 }
