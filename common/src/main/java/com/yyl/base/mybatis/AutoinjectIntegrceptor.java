@@ -78,11 +78,7 @@ public class AutoinjectIntegrceptor implements Interceptor {
                 fillObjects.add(entity);
             }
             for(Object fillObject:fillObjects){
-                if(sqlCommandType==SqlCommandType.INSERT){
-                    fillFieldValue(insertInfos,fillObject,SqlCommandType.INSERT);
-                }else if(sqlCommandType==SqlCommandType.UPDATE){
-                    fillFieldValue(updateInfos,fillObject,SqlCommandType.UPDATE);
-                }
+                fillFieldValue(insertInfos,fillObject,sqlCommandType);
             }
         }catch (Exception e){
             log.error("do AutoinjectIntegrceptor error",e);

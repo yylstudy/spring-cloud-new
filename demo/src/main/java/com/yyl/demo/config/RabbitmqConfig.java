@@ -1,6 +1,5 @@
 package com.yyl.demo.config;
 
-import com.yyl.base.context.ApplicationContextHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
